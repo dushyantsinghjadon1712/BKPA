@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bharat Krishi Price Advisor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="hero">
+    <svg class="hero-art" viewBox="0 0 1200 340" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2b3a42"/>
+          <stop offset="45%" stop-color="#a85a3f"/>
+          <stop offset="75%" stop-color="#e8a33d"/>
+          <stop offset="100%" stop-color="#f0e4c9"/>
+        </linearGradient>
+        <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff3d6" stop-opacity="0.95"/>
+          <stop offset="60%" stop-color="#f2b134" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#f2b134" stop-opacity="0"/>
+        </radialGradient>
+        <pattern id="wheatTile" width="46" height="130" patternUnits="userSpaceOnUse">
+          <g fill="#2b3a42">
+            <path d="M23 130 L23 40" stroke="#2b3a42" stroke-width="2.5"/>
+            <ellipse cx="23" cy="16" rx="4.5" ry="10"/>
+            <ellipse cx="17" cy="24" rx="4" ry="9" transform="rotate(-28 17 24)"/>
+            <ellipse cx="29" cy="24" rx="4" ry="9" transform="rotate(28 29 24)"/>
+            <ellipse cx="16" cy="34" rx="3.6" ry="8" transform="rotate(-34 16 34)"/>
+            <ellipse cx="30" cy="34" rx="3.6" ry="8" transform="rotate(34 30 34)"/>
+          </g>
+        </pattern>
+      </defs>
+
+      <rect width="1200" height="340" fill="url(#sky)"/>
+      <circle cx="220" cy="150" r="95" fill="url(#sunGlow)"/>
+      <circle cx="220" cy="150" r="46" fill="#fbe3a1"/>
+
+      <path d="M0,210 C180,170 320,230 520,190 C740,145 900,215 1200,175 L1200,340 L0,340 Z" fill="#c1652f" opacity="0.55"/>
+      <path d="M0,250 C220,215 380,265 600,235 C820,205 980,255 1200,225 L1200,340 L0,340 Z" fill="#a3502a" opacity="0.7"/>
+
+      <rect x="0" y="255" width="1200" height="85" fill="url(#wheatTile)" opacity="0.9"/>
+      <rect x="0" y="330" width="1200" height="10" fill="#2b3a42"/>
+    </svg>
+
+    <div class="hero-copy">
+      <p class="eyebrow">Rajasthan mandi intelligence &middot; real data, 2001&ndash;2026</p>
+      <h1>Bharat Krishi <em>Price</em> Advisor</h1>
+      <p class="tagline">Know the best mandi, the safest crop, and where prices are headed &mdash; before you sow.</p>
+    </div>
+  </div>
+
+  <nav id="tabs">
+    <button class="tab-btn active" data-tab="best-mandi"><span class="tab-icon">📍</span>Best Mandi</button>
+    <button class="tab-btn" data-tab="trend"><span class="tab-icon">📈</span>Price Trend</button>
+    <button class="tab-btn" data-tab="volatility"><span class="tab-icon">⚠️</span>Volatility</button>
+    <button class="tab-btn" data-tab="recommend"><span class="tab-icon">🌱</span>Crop Recommendation</button>
+    <button class="tab-btn" data-tab="forecast"><span class="tab-icon">🔮</span>Price Forecast</button>
+    <button class="tab-btn" data-tab="national"><span class="tab-icon">🌍</span>National Yield Model</button>
+  </nav>
+
+  <main>
+    <section id="best-mandi" class="tab-panel active">
+      <div class="panel-card">
+        <h2>Find the best mandi for your crop</h2>
+        <div class="controls">
+          <label>Crop <select id="bm-crop"></select></label>
+          <label>Top N <input type="number" id="bm-topn" value="5" min="3" max="20"></label>
+          <button onclick="loadBestMandi()">Search</button>
+        </div>
+        <div id="bm-result" class="result-area"></div>
+      </div>
+    </section>
+
+    <section id="trend" class="tab-panel">
+      <div class="panel-card">
+        <h2>Price trend over time</h2>
+        <div class="controls">
+          <label>Crop <select id="tr-crop"></select></label>
+          <label>Market (optional) <select id="tr-market"><option value="">All markets</option></select></label>
+          <button onclick="loadTrend()">Search</button>
+        </div>
+        <div id="tr-result" class="result-area"></div>
+      </div>
+    </section>
+
+    <section id="volatility" class="tab-panel">
+      <div class="panel-card">
+        <h2>Which crops are risky right now?</h2>
+        <div class="controls">
+          <button onclick="loadVolatility()">Load Volatility Ranking</button>
+        </div>
+        <div id="vol-result" class="result-area"></div>
+      </div>
+    </section>
+
+    <section id="recommend" class="tab-panel">
+      <div class="panel-card">
+        <h2>Which crop should I grow?</h2>
+        <p class="subtext">Real Rajasthan price + volatility, blended with a proxy-based national yield model.</p>
+        <div class="controls">
+          <label>Season
+            <select id="rec-season">
+              <option>Kharif</option><option>Rabi</option><option>Zaid</option>
+            </select>
+          </label>
+          <label>Top N <input type="number" id="rec-topn" value="8" min="3" max="20"></label>
+          <button onclick="loadRecommendation()">Get Recommendation</button>
+        </div>
+        <p class="note">Avg_Rajasthan_Price &amp; Volatility are real. Proxy_Relative_Yield_Performance is estimated
+        from a Gujarat/MP/Haryana soil-weather proxy since Rajasthan isn't in the national soil/weather dataset.</p>
+        <div id="rec-result" class="result-area"></div>
+      </div>
+    </section>
+
+    <section id="forecast" class="tab-panel">
+      <div class="panel-card">
+        <h2>Forecast future mandi prices</h2>
+        <div class="controls">
+          <label>Crop <select id="fc-crop"></select></label>
+          <label>Market <select id="fc-market"></select></label>
+          <label>Weeks ahead <input type="number" id="fc-periods" value="12" min="4" max="52"></label>
+          <button onclick="loadForecast()">Forecast</button>
+        </div>
+        <div id="fc-result" class="result-area"></div>
+      </div>
+    </section>
+
+    <section id="national" class="tab-panel">
+      <div class="panel-card">
+        <h2>National crop yield predictor</h2>
+        <p class="warning">Trained on 30 Indian states &mdash; Rajasthan is not among them (see Crop Recommendation tab
+        for the Rajasthan-specific proxy version).</p>
+        <div class="controls">
+          <label>State <select id="ny-state"></select></label>
+          <label>Season
+            <select id="ny-season">
+              <option>Any</option>
+            </select>
+          </label>
+          <label>Top N <input type="number" id="ny-topn" value="5" min="3" max="20"></label>
+          <button onclick="loadNational()">Predict</button>
+        </div>
+        <div id="ny-result" class="result-area"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-board" id="model-meta"></div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
